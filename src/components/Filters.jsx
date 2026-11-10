@@ -7,7 +7,7 @@ const categories = [
   { value: "women's clothing", label: 'Женская одежда' },
 ];
 
-export function Filters({ onFilterChange, initialFilters }) {
+export function Filters({ onFilterChange, initialFilters, priceSliderMax }) {
   const [localCategories, setLocalCategories] = React.useState(initialFilters.categories ?? []);
   const [localMinPrice, setLocalMinPrice] = React.useState(String(initialFilters.minPrice ?? ''));
   const [localMaxPrice, setLocalMaxPrice] = React.useState(String(initialFilters.maxPrice ?? ''));
@@ -72,6 +72,11 @@ export function Filters({ onFilterChange, initialFilters }) {
     setErrors((previous) => ({ ...previous, max: '' }));
   };
 
+  const minSliderValue = Math.min(Math.max(Number(localMinPrice) || 0, 0), priceSliderMax);
+  const maxSliderValue = localMaxPrice === ''
+    ? priceSliderMax
+    : Math.min(Math.max(Number(localMaxPrice) || 0, 0), priceSliderMax);
+
   return (
     <div style={{ marginBottom: '2rem' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
@@ -109,6 +114,16 @@ export function Filters({ onFilterChange, initialFilters }) {
               borderRadius: '4px',
             }}
           />
+          <input
+            type="range"
+            min="0"
+            max={priceSliderMax}
+            step="0.01"
+            value={minSliderValue}
+            onChange={handleMinChange}
+            aria-label="Минимальная цена"
+            style={{ width: '100%' }}
+          />
           {errors.min && (
             <span style={{ color: 'red', fontSize: '0.85rem', marginTop: '4px', display: 'block' }}>
               {errors.min}
@@ -131,6 +146,16 @@ export function Filters({ onFilterChange, initialFilters }) {
               border: errors.max ? '1px solid red' : '1px solid #ccc',
               borderRadius: '4px',
             }}
+          />
+          <input
+            type="range"
+            min="0"
+            max={priceSliderMax}
+            step="0.01"
+            value={maxSliderValue}
+            onChange={handleMaxChange}
+            aria-label="Максимальная цена"
+            style={{ width: '100%' }}
           />
           {errors.max && (
             <span style={{ color: 'red', fontSize: '0.85rem', marginTop: '4px', display: 'block' }}>

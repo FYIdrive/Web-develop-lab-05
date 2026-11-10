@@ -48,13 +48,21 @@ export function ProductList() {
     if (filters.maxPrice !== undefined && product.price > filters.maxPrice) return false;
     return true;
   });
+  const priceSliderMax = Math.max(
+    1,
+    Math.ceil(products.reduce((maxPrice, product) => Math.max(maxPrice, product.price), 0)),
+  );
 
   if (loading) return <p style={{ textAlign: 'center' }}>Загрузка товаров...</p>;
   if (error) return <p style={{ color: 'red', textAlign: 'center' }}>Ошибка: {error}</p>;
 
   return (
     <section>
-      <Filters onFilterChange={setFilters} initialFilters={filters} />
+      <Filters
+        onFilterChange={setFilters}
+        initialFilters={filters}
+        priceSliderMax={priceSliderMax}
+      />
       {filteredProducts.length === 0 ? (
         <p style={{ textAlign: 'center', color: '#777' }}>Товары не найдены по выбранным фильтрам.</p>
       ) : (
