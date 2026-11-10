@@ -7,7 +7,7 @@ export function ProductList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
-    category: undefined,
+    categories: [],
     minPrice: undefined,
     maxPrice: undefined,
   });
@@ -43,7 +43,7 @@ export function ProductList() {
   }, []);
 
   const filteredProducts = products.filter((product) => {
-    if (filters.category && product.category !== filters.category) return false;
+    if (filters.categories.length > 0 && !filters.categories.includes(product.category)) return false;
     if (filters.minPrice !== undefined && product.price < filters.minPrice) return false;
     if (filters.maxPrice !== undefined && product.price > filters.maxPrice) return false;
     return true;

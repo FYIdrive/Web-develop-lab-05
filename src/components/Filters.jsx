@@ -1,10 +1,25 @@
 import React from 'react';
 
+const categories = [
+  { value: 'electronics', label: 'Электроника' },
+  { value: 'jewelery', label: 'Ювелирные изделия' },
+  { value: "men's clothing", label: 'Мужская одежда' },
+  { value: "women's clothing", label: 'Женская одежда' },
+];
+
 export function Filters({ onFilterChange, initialFilters }) {
-  const [localCategory, setLocalCategory] = React.useState(initialFilters.category || '');
+  const [localCategories, setLocalCategories] = React.useState(initialFilters.categories ?? []);
   const [localMinPrice, setLocalMinPrice] = React.useState(String(initialFilters.minPrice ?? ''));
   const [localMaxPrice, setLocalMaxPrice] = React.useState(String(initialFilters.maxPrice ?? ''));
   const [errors, setErrors] = React.useState({});
+
+  const handleCategoryChange = (category) => {
+    setLocalCategories((currentCategories) => (
+      currentCategories.includes(category)
+        ? currentCategories.filter((item) => item !== category)
+        : [...currentCategories, category]
+    ));
+  };
 
   const validate = () => {
     const errs = {};
@@ -41,7 +56,7 @@ export function Filters({ onFilterChange, initialFilters }) {
     if (Object.keys(errs).length > 0) return;
 
     onFilterChange({
-      category: localCategory === '' ? undefined : localCategory,
+      categories: localCategories,
       minPrice: localMinPrice === '' ? undefined : Number(localMinPrice),
       maxPrice: localMaxPrice === '' ? undefined : Number(localMaxPrice),
     });
@@ -61,18 +76,21 @@ export function Filters({ onFilterChange, initialFilters }) {
     <div style={{ marginBottom: '2rem' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
         <div>
-          <label>Категория</label>
-          <select
-            value={localCategory}
-            onChange={(event) => setLocalCategory(event.target.value)}
-            style={{ width: '100%', padding: '8px' }}
-          >
-            <option value="">Все категории</option>
-            <option value="electronics">Электроника</option>
-            <option value="jewelery">Ювелирные изделия</option>
-            <option value="men's clothing">Мужская одежда</option>
-            <option value="women's clothing">Женская одежда</option>
-          </select>
+          <fieldset style={{ border: 'none', margin: 0, padding: 0 }}>
+            <legend style={{ marginBottom: '8px' }}>Категории</legend>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '8px' }}>
+              {categories.map((category) => (
+                <label key={category.value} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <input
+                    type="checkbox"
+                    checked={localCategories.includes(category.value)}
+                    onChange={() => handleCategoryChange(category.value)}
+                  />
+                  {category.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
         </div>
 
         <div>
